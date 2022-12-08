@@ -25,3 +25,4 @@ lua/libimlib2.c
 *.code-workspace
 .idea/
 
+*.user
