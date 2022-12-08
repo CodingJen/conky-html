@@ -55,6 +55,12 @@ endif(BUILD_EXTRAS)
 add_subdirectory(3rdparty/toluapp)
 set(conky_libs ${conky_libs} toluapp_lib_static)
 
+if(USE_HTML)
+    # Include ultralight
+    add_subdirectory(3rdparty/ultralight)
+    include_directories(3rdparty/ultralight/include)
+endif(USE_HTML)
+
 if(BUILD_TESTS)
   if(USING_CLANG)
     message(STATUS "Detected clang, enabling test coverage reports")
