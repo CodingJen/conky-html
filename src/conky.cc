@@ -154,7 +154,7 @@ const char builtin_config_magic[] = "==builtin==";
 #undef SIGNAL_BLOCKING
 
 /* debugging level, used by logging.h */
-int global_debug_level = 0;
+int global_debug_level = 1;
 
 /* disable inotify auto reload feature if desired */
 static conky::simple_config_setting<bool> disable_auto_reload(
