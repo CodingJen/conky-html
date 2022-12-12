@@ -11,6 +11,7 @@ doc/*.html
 Makefile
 CMakeCache.txt
 CMakeFiles
+.cmake*/
 data/convertconf.h
 data/defconfig.h
 lua/libcairo-orig.c
