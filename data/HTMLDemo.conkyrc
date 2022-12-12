@@ -1,0 +1,49 @@
+conky.config = {
+    background = false,
+    update_interval = 1,
+    double_buffer = true,
+    false_buffers = true,
+
+    draw_shades = false,
+    draw_outline = false,
+    draw_borders = false,
+
+    gap_x = 60,
+    gap_y = 35,
+
+    alignment = 'bottom_middle',
+
+    minimum_height = 0,
+    minimum_width = 0,
+
+    own_window = true,
+    own_window_type = 'panel',
+    own_window_transparent = true,
+    own_window_hints = 'undecorated,below,skip_taskbar,skip_pager',
+
+    own_window_argb_visual = true,
+    own_window_argb_value = 0,
+
+    use_xft = true,
+    xftalpha = 0.1,
+    text_buffer_size = 256,
+    override_utf8_locale = true,
+
+    -- Colours
+    color3 = '#FFFFFF',
+    color4 = '#3daee9',
+    color8 = '#999999',
+
+    html = true
+}
+
+conky.text = [[
+<html>
+<head><title>Conky - HTML Demo</title></head>
+<body>
+<h1>Hello World!</h1>
+${time %A, %B %e, %Y} ${time %I:%M:%S}
+<p>${uptime}</p>
+</body>
+</html>
+]]
