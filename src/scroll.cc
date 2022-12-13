@@ -29,6 +29,7 @@
 #include <vector>
 #include "conky.h"
 #include "core.h"
+#include "display-output.hh"
 #include "logging.h"
 #include "specials.h"
 #include "text_object.h"
@@ -50,9 +51,9 @@ inline int scroll_character_length(char c) {
 
     return len;
   }
-#else  /* BUILD_X11 */
+#else  /* BUILD_GUI */
   (void)c;
-#endif /* BUILD_X11 */
+#endif /* BUILD_GUI */
 
   return 1;
 }
@@ -321,7 +322,7 @@ void print_scroll(struct text_object *obj, char *p, unsigned int p_max_size) {
 
 #ifdef BUILD_GUI
   // reset color when scroll is finished
-  if (out_to_x.get(*state)) {
+  if (display_output() && display_output()->graphical()) {
     new_special(p + strlen(p), FG)->arg = sd->resetcolor;
   }
 #endif

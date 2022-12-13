@@ -43,6 +43,7 @@
 #include "colours.h"
 #include "common.h"
 #include "conky.h"
+#include "display-output.hh"
 
 struct special_t *specials = nullptr;
 
@@ -67,6 +68,9 @@ conky::range_config_setting<int> default_gauge_width(
     "default_gauge_width", 0, std::numeric_limits<int>::max(), 40, false);
 conky::range_config_setting<int> default_gauge_height(
     "default_gauge_height", 0, std::numeric_limits<int>::max(), 25, false);
+
+conky::simple_config_setting<bool> store_graph_data_explicitly(
+    "store_graph_data_explicitly", true, true);
 #endif /* BUILD_GUI */
 
 conky::simple_config_setting<std::string> console_graph_ticks(
@@ -389,7 +393,7 @@ void new_gauge_in_x11(struct text_object *obj, char *buf, double usage) {
   struct special_t *s = nullptr;
   auto *g = static_cast<struct gauge *>(obj->special_data);
 
-  if (!out_to_x.get(*state)) { return; }
+  if (display_output() == nullptr || !display_output()->graphical()) { return; }
 
   if (g == nullptr) { return; }
 
@@ -415,7 +419,9 @@ void new_gauge(struct text_object *obj, char *p, unsigned int p_max_size,
   }
 
 #ifdef BUILD_GUI
-  if (out_to_x.get(*state)) { new_gauge_in_x11(obj, p, usage); }
+  if (display_output() && display_output()->graphical()) {
+    new_gauge_in_x11(obj, p, usage);
+  }
   if (out_to_stdout.get(*state)) {
     new_gauge_in_shell(obj, p, p_max_size, usage);
   }
@@ -429,7 +435,7 @@ void new_font(struct text_object *obj, char *p, unsigned int p_max_size) {
   struct special_t *s;
   unsigned int tmp = selected_font;
 
-  if (!out_to_x.get(*state)) { return; }
+  if (display_output() == nullptr || !display_output()->graphical()) { return; }
 
   if (p_max_size == 0) { return; }
 
@@ -596,17 +602,21 @@ void new_graph(struct text_object *obj, char *buf, int buf_max_size,
   }
 #endif
 
-  if (s->graph) { s->graph = retrieve_graph(g->id, s->graph_width); }
+  if (store_graph_data_explicitly.get(*state)) {
+    if (s->graph) { s->graph = retrieve_graph(g->id, s->graph_width); }
 
-  graph_append(s, val, g->flags);
+    graph_append(s, val, g->flags);
 
-  store_graph(g->id, s);
+    store_graph(g->id, s);
+  } else {
+    graph_append(s, val, g->flags);
+  }
 
   if (out_to_stdout.get(*state)) { new_graph_in_shell(s, buf, buf_max_size); }
 }
 
 void new_hr(struct text_object *obj, char *p, unsigned int p_max_size) {
-  if (!out_to_x.get(*state)) { return; }
+  if (display_output() == nullptr || !display_output()->graphical()) { return; }
 
   if (p_max_size == 0) { return; }
 
@@ -636,7 +646,7 @@ void new_stippled_hr(struct text_object *obj, char *p,
   struct special_t *s = nullptr;
   auto *sh = static_cast<struct stippled_hr *>(obj->special_data);
 
-  if (!out_to_x.get(*state)) { return; }
+  if (display_output() == nullptr || !display_output()->graphical()) { return; }
 
   if ((sh == nullptr) || (p_max_size == 0)) { return; }
 
@@ -649,7 +659,9 @@ void new_stippled_hr(struct text_object *obj, char *p,
 
 void new_fg(struct text_object *obj, char *p, unsigned int p_max_size) {
 #ifdef BUILD_GUI
-  if (out_to_x.get(*state)) { new_special(p, FG)->arg = obj->data.l; }
+  if (display_output() && display_output()->graphical()) {
+    new_special(p, FG)->arg = obj->data.l;
+  }
 #endif /* BUILD_GUI */
 #ifdef BUILD_NCURSES
   if (out_to_ncurses.get(*state)) { new_special(p, FG)->arg = obj->data.l; }
@@ -661,7 +673,7 @@ void new_fg(struct text_object *obj, char *p, unsigned int p_max_size) {
 
 #ifdef BUILD_GUI
 void new_bg(struct text_object *obj, char *p, unsigned int p_max_size) {
-  if (!out_to_x.get(*state)) { return; }
+  if (display_output() == nullptr || !display_output()->graphical()) { return; }
 
   if (p_max_size == 0) { return; }
 
@@ -697,7 +709,7 @@ static void new_bar_in_x11(struct text_object *obj, char *buf, double usage) {
   struct special_t *s = nullptr;
   auto *b = static_cast<struct bar *>(obj->special_data);
 
-  if (!out_to_x.get(*state)) { return; }
+  if (display_output() == nullptr || !display_output()->graphical()) { return; }
 
   if (b == nullptr) { return; }
 
@@ -724,7 +736,9 @@ void new_bar(struct text_object *obj, char *p, unsigned int p_max_size,
   }
 
 #ifdef BUILD_GUI
-  if (out_to_x.get(*state)) { new_bar_in_x11(obj, p, usage); }
+  if (display_output() && display_output()->graphical()) {
+    new_bar_in_x11(obj, p, usage);
+  }
   if (out_to_stdout.get(*state)) {
     new_bar_in_shell(obj, p, p_max_size, usage);
   }
