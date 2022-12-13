@@ -171,6 +171,8 @@ static conky::simple_config_setting<spacer_state> use_spacer("use_spacer",
                                                              NO_SPACER, false);
 
 /* variables holding various config settings */
+static conky::simple_config_setting<bool> html("html", false, true);
+
 static conky::simple_config_setting<bool> short_units("short_units", false,
                                                       true);
 static conky::simple_config_setting<bool> format_human_readable(
